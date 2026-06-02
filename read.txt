@@ -1,0 +1,329 @@
+# PixelCart — Full Stack E-Commerce Platform
+
+> A modern, full-stack e-commerce platform for premium mobiles and laptops, built with the MERN stack, Next.js 15, TypeScript, and Razorpay payment integration.
+
+🌐 **Live Demo:** [pixel-cart-ecommerce.vercel.app](https://pixel-cart-ecommerce.vercel.app)
+🔗 **Backend API:** [pixelcart-backend-6069.onrender.com](https://pixelcart-backend-6069.onrender.com)
+
+> ⚠️ **Note:** Backend is hosted on Render free tier. First request after inactivity may take 30–50 seconds to wake up. This is expected behaviour on free hosting.
+
+---
+
+## Table of Contents
+
+- [Overview](#overview)
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Project Structure](#project-structure)
+- [System Architecture](#system-architecture)
+- [API Endpoints](#api-endpoints)
+- [Getting Started](#getting-started)
+- [Environment Variables](#environment-variables)
+- [Deployment](#deployment)
+- [Author](#author)
+
+---
+
+## Overview
+
+PixelCart is a production-ready e-commerce web application that allows users to browse, filter, and purchase premium electronics — mobiles and laptops from brands like Apple, Samsung, and OnePlus. It features passwordless OTP-based authentication, a full shopping cart, Razorpay payment gateway integration, product reviews and ratings, and a complete admin dashboard for product and order management.
+
+---
+
+## Features
+
+### Authentication
+- Passwordless OTP-based authentication — no passwords stored
+- OTP sent to email via Nodemailer (Gmail)
+- OTP expires in 10 minutes
+- JWT token stored in HTTP-only cookie with 7-day session
+- Role-based access control — user and admin roles
+
+### Store
+- Product listing with category filters (Mobiles / Laptops)
+- Sort by price (low to high, high to low) and top rated
+- Individual product detail page with full specifications
+- Star rating and review system (one review per user per product)
+- Real-time average rating calculation on every review
+
+### Cart and Checkout
+- Add to cart with quantity controls
+- Persistent cart state via Redux
+- Order summary with itemwise breakdown
+- Razorpay payment gateway integration (test mode)
+- Order confirmation page after successful payment
+- Order history page for each user
+
+### Admin Dashboard
+- Protected admin-only routes
+- Add, edit, delete products with full spec support
+- View all orders with user details and payment status
+- Stats overview — total products, orders, revenue, users
+
+---
+
+## Tech Stack
+
+### Frontend
+| Technology | Purpose |
+|---|---|
+| Next.js 15 (App Router) | React framework, routing, SSR |
+| TypeScript | Type safety throughout |
+| Tailwind CSS | Utility-first styling |
+| Redux Toolkit | Global state — cart and auth |
+| Axios | HTTP client with cookie support |
+
+### Backend
+| Technology | Purpose |
+|---|---|
+| Node.js + Express.js | REST API server |
+| MongoDB + Mongoose | Database and ODM |
+| JWT (jsonwebtoken) | Session authentication |
+| Nodemailer | OTP email delivery |
+| Razorpay | Payment gateway |
+| bcryptjs | Utility (installed, passwordless flow used) |
+| cors + cookie-parser | Security and cookie handling |
+
+### DevOps
+| Service | Purpose |
+|---|---|
+| MongoDB Atlas | Cloud database |
+| Render | Backend hosting |
+| Vercel | Frontend hosting |
+| GitHub | Version control |
+
+---
+
+## Project Structure
+
+```
+PixelCart-Ecommerce/
+├── client/                          ← Next.js frontend
+│   ├── app/
+│   │   ├── (auth)/
+│   │   │   ├── login/page.tsx
+│   │   │   ├── register/page.tsx
+│   │   │   └── verify-otp/page.tsx
+│   │   ├── admin/page.tsx
+│   │   ├── cart/page.tsx
+│   │   ├── checkout/page.tsx
+│   │   ├── order-success/page.tsx
+│   │   ├── orders/page.tsx
+│   │   ├── product/[id]/page.tsx
+│   │   ├── layout.tsx
+│   │   └── page.tsx
+│   ├── components/
+│   │   ├── Navbar.tsx
+│   │   └── ProductCard.tsx
+│   ├── lib/
+│   │   └── axios.ts
+│   ├── store/
+│   │   ├── slices/
+│   │   │   ├── authSlice.ts
+│   │   │   └── cartSlice.ts
+│   │   ├── hooks.ts
+│   │   └── index.ts
+│   └── types/
+│       └── index.ts
+│
+└── server/                          ← Express backend
+    ├── config/
+    │   └── db.js
+    ├── controllers/
+    │   ├── authController.js
+    │   ├── orderController.js
+    │   ├── productController.js
+    │   └── reviewController.js
+    ├── middleware/
+    │   └── authMiddleware.js
+    ├── models/
+    │   ├── Order.js
+    │   ├── Product.js
+    │   ├── Review.js
+    │   └── User.js
+    ├── routes/
+    │   ├── authRoutes.js
+    │   ├── orderRoutes.js
+    │   ├── productRoutes.js
+    │   └── reviewRoutes.js
+    ├── utils/
+    │   └── sendEmail.js
+    └── server.js
+```
+
+---
+
+## System Architecture
+
+```
+Browser (Next.js)
+      ↓  HTTP requests with JWT cookie
+Express API (Render)
+      ↓  Mongoose queries
+MongoDB Atlas (Cloud DB)
+
+External Services:
+- Nodemailer → Gmail SMTP → User email (OTP)
+- Razorpay   → Payment processing (test mode)
+```
+
+---
+
+## API Endpoints
+
+### Auth Routes — `/api/auth`
+| Method | Endpoint | Access | Description |
+|---|---|---|---|
+| POST | `/register` | Public | Register with username and email, sends OTP |
+| POST | `/send-otp` | Public | Send OTP for login |
+| POST | `/verify-otp` | Public | Verify OTP, issues JWT cookie |
+| POST | `/logout` | Public | Clears JWT cookie |
+
+### Product Routes — `/api/products`
+| Method | Endpoint | Access | Description |
+|---|---|---|---|
+| GET | `/` | Public | Get all products with optional filters |
+| GET | `/:id` | Public | Get single product |
+| POST | `/` | Admin | Create new product |
+| PATCH | `/:id` | Admin | Update product |
+| DELETE | `/:id` | Admin | Delete product |
+
+### Order Routes — `/api/orders`
+| Method | Endpoint | Access | Description |
+|---|---|---|---|
+| POST | `/` | User | Create Razorpay order |
+| POST | `/verify-payment` | User | Verify payment and confirm order |
+| GET | `/my-orders` | User | Get logged in user's orders |
+| GET | `/all` | Admin | Get all orders |
+
+### Review Routes — `/api/products/:id/reviews`
+| Method | Endpoint | Access | Description |
+|---|---|---|---|
+| GET | `/` | Public | Get all reviews for a product |
+| POST | `/` | User | Submit a review |
+
+---
+
+## Getting Started
+
+### Prerequisites
+- Node.js 18+
+- MongoDB Atlas account
+- Gmail account with App Password enabled
+- Razorpay account (test mode)
+
+### Clone the repository
+
+```bash
+git clone https://github.com/akshitmalia/PixelCart-Ecommerce.git
+cd PixelCart-Ecommerce
+```
+
+### Setup backend
+
+```bash
+cd server
+npm install
+```
+
+Create `server/.env` — see [Environment Variables](#environment-variables) section.
+
+```bash
+npm run dev
+```
+
+Backend runs on `http://localhost:5000`
+
+### Setup frontend
+
+```bash
+cd client
+npm install
+```
+
+Create `client/.env.local`:
+```
+NEXT_PUBLIC_RAZORPAY_KEY_ID=your_razorpay_test_key
+```
+
+```bash
+npm run dev
+```
+
+Frontend runs on `http://localhost:3000`
+
+---
+
+## Environment Variables
+
+### `server/.env`
+
+```
+PORT=5000
+MONGO_URI=mongodb+srv://username:password@cluster.mongodb.net/pixelcartdb
+JWT_SECRET=your_jwt_secret_key
+EMAIL_USER=your_gmail@gmail.com
+EMAIL_PASS=your_gmail_app_password
+RAZORPAY_KEY_ID=rzp_test_xxxxxxxxxxxxxx
+RAZORPAY_KEY_SECRET=xxxxxxxxxxxxxxxxxxxxxxxx
+```
+
+### `client/.env.local`
+
+```
+NEXT_PUBLIC_RAZORPAY_KEY_ID=rzp_test_xxxxxxxxxxxxxx
+```
+
+---
+
+## Deployment
+
+| Service | Platform | URL |
+|---|---|---|
+| Frontend | Vercel | [pixel-cart-ecommerce.vercel.app](https://pixel-cart-ecommerce.vercel.app) |
+| Backend | Render | [pixelcart-backend-6069.onrender.com](https://pixelcart-backend-6069.onrender.com) |
+| Database | MongoDB Atlas | Cloud hosted |
+
+### Deploy backend on Render
+1. Connect GitHub repo
+2. Set Root Directory to `server`
+3. Build command: `npm install`
+4. Start command: `node server.js`
+5. Add all environment variables from `server/.env`
+
+### Deploy frontend on Vercel
+1. Connect GitHub repo
+2. Set Root Directory to `client`
+3. Framework: Next.js (auto detected)
+4. Add `NEXT_PUBLIC_RAZORPAY_KEY_ID` environment variable
+
+---
+
+## Test Payment Credentials
+
+This project uses Razorpay in **test mode**. No real money is involved.
+
+| Method | Details |
+|---|---|
+| UPI | `success@razorpay` |
+| Netbanking | Select any bank → click Success |
+| Card | `4111 1111 1111 1111` · Any future date · Any CVV |
+
+---
+
+## Author
+
+**Akshit Malia**
+
+- GitHub: [@akshitmalia](https://github.com/akshitmalia)
+- LinkedIn: [akshit-malia](https://linkedin.com/in/akshit-malia-6b35b0256)
+
+---
+
+## License
+
+This project is open-source and available under the [MIT License](LICENSE).
+
+---
+
+> **Disclaimer:** PixelCart is a portfolio/prototype project built for learning and demonstration purposes. No real products are sold and no real transactions are processed.
