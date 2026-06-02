@@ -19,15 +19,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-app.use(cors({
-  origin: [
-    "http://localhost:3000",
-    "https://pixel-cart-ecommerce.vercel.app",  //Will be updated agian
-  ],
-  credentials: true,
-  methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-}));
 
 const PORT=process.env.PORT || 5000;
 
