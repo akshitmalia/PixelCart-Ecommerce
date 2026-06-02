@@ -14,6 +14,17 @@ dotenv.config();
 DB();
 
 const app=express();
+
+app.use(cors({
+  origin: [
+    "http://localhost:3000",
+    "https://pixel-cart-ecommerce.vercel.app",  //Will be updated agian
+  ],
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+}));
+
 app.use(express.json());
 
 app.use(express.urlencoded({ extended: true }));
