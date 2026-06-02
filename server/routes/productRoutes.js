@@ -13,7 +13,7 @@ const router = express.Router();
 router.get("/", getAllProducts);
 router.get("/:id", getSingleProduct);
 router.post("/", protect, adminOnly, createProduct);
-router.put("/:id", protect, adminOnly, updateProduct);
+router.patch("/:id", protect, adminOnly, updateProduct); // to change put to patch here
 router.delete("/:id", protect, adminOnly, deleteProduct);
 
 export default router;
