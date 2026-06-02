@@ -18,8 +18,12 @@ app.use(express.json());
 
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+
 app.use(cors({
-  origin: "http://localhost:3000",
+  origin: [
+    "http://localhost:3000",
+    "https://pixelcart.vercel.app",  //Will be updated agian
+  ],
   credentials: true,
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"],
