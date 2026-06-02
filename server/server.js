@@ -22,7 +22,7 @@ app.use(cookieParser());
 app.use(cors({
   origin: [
     "http://localhost:3000",
-    "https://pixelcart.vercel.app",  //Will be updated agian
+    "https://pixel-cart-ecommerce.vercel.app",  //Will be updated agian
   ],
   credentials: true,
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
