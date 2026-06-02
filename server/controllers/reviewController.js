@@ -1,5 +1,5 @@
-import Review from "../models/review.js";
-import Product from "../models/product.js";
+import Review from "../models/Review.js";
+import Product from "../models/Product.js";
 
 // CREATing REVIEW - logged in users only
 async function createReview(req, res) {
