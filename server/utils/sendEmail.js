@@ -1,11 +1,17 @@
-import { Resend } from "resend";
-
-const resend = new Resend(process.env.RESEND_API_KEY);
+import nodemailer from "nodemailer";
 
 async function sendEmail(to, otp) {
   try {
-    await resend.emails.send({
-      from: "PixelCart <onboarding@resend.dev>",
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+    });
+
+    await transporter.sendMail({
+      from: `"PixelCart" <${process.env.EMAIL_USER}>`,
       to: to,
       subject: "PixelCart — Your OTP Code",
       html: `
@@ -16,9 +22,11 @@ async function sendEmail(to, otp) {
         <p>If you did not request this, ignore this email.</p>
       `,
     });
+
     console.log("OTP email sent successfully");
+
   } catch (err) {
-    console.log("Email sending failed:", err.message); 
+    console.log("Email sending failed:", err.message);
   }
 }
 
