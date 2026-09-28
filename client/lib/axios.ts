@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://pixelcart-ecommerce.onrender.com",
+  baseURL: "https://pixelcart-ecommerce.onrender.com/api",
   withCredentials: true,
 });
 
