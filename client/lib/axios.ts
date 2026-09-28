@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://renewed-blessing-production-644a.up.railway.app/api",
+  baseURL: "https://pixelcart-ecommerce.onrender.com",
   withCredentials: true,
 });
 
